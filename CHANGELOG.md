@@ -4,7 +4,7 @@
 
 - **Welcome guide:** a short illustrated tour on first launch, explaining what FLeeker does and how
   to use it (reopen it anytime with the **?** button)
-- **New icon:** a magnifying glass over the FL Studio colors
+- **New icon:** a white magnifying glass with an FL Studio orange lens
 - **macOS installer:** a `.dmg` with the classic window, just drag FLeeker onto Applications,
   with illustrated steps for the first launch and a **First launch help** guide (English and Italian)
 - New languages: Chinese (Simplified), German, Spanish and French, alongside English and Italian
