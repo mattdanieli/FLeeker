@@ -5,7 +5,8 @@
 - **Welcome guide:** a short illustrated tour on first launch, explaining what FLeeker does and how
   to use it (reopen it anytime with the **?** button)
 - **New icon:** a magnifying glass over the FL Studio colors
-- **macOS installer:** a `.dmg` with the classic window, just drag FLeeker onto Applications
+- **macOS installer:** a `.dmg` with the classic window, just drag FLeeker onto Applications,
+  with illustrated steps for the first launch and a **First launch help** guide (English and Italian)
 - New languages: Chinese (Simplified), German, Spanish and French, alongside English and Italian
 - Language menu (🌐) in the top bar; the app starts in English and remembers your choice
 - Chinese, Japanese and Korean sample names are displayed correctly (uses the system font)
