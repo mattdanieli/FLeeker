@@ -196,7 +196,8 @@ mod tests {
     /// Percorso completo: carico, sposto e rinomino i file, ricarico, cerco, applico.
     #[test]
     fn flusso_completo() {
-        let dir = tempfile::tempdir().unwrap();
+        // Prefisso con maiuscole: con un Tags tutto minuscolo i nuovi percorsi verrebbero scritti in minuscolo
+        let dir = tempfile::Builder::new().prefix("FLeeker").tempdir().unwrap();
         let root = dir.path();
         unsafe { std::env::set_var("FLEEKER_DB", root.join("db.json")) };
         let old = root.join("old pack");
