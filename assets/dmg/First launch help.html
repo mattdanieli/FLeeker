@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLeeker · First launch</title>
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#1c1f26;--muted:#6b7280;--line:#e1e4ea;--accent:#e86e12;--blue:#0a84ff;--code:#1c1f26}
+@media (prefers-color-scheme:dark){:root{--bg:#16181d;--card:#20232a;--ink:#eef0f4;--muted:#9aa1ad;--line:#30343d;--code:#0e1013}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 60px}
+header{display:flex;gap:20px;align-items:center;margin-bottom:28px}
+header img{width:84px;height:84px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
+h1{font-size:30px;line-height:1.2;margin:0 0 6px}
+.lead{color:var(--muted);margin:0}
+.lang{flex-shrink:0;margin-left:auto;align-self:flex-start;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;padding:5px 12px;cursor:pointer}
+.lang button.on{background:var(--accent);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin:18px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card h2{font-size:19px;margin:0 0 4px;display:flex;gap:10px;align-items:center}
+.tag{font-size:12px;font-weight:600;color:#fff;background:var(--accent);border-radius:999px;padding:2px 10px}
+.tag.grey{background:#8e8e93}
+.sub{color:var(--muted);margin:0 0 18px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:700px){.steps{grid-template-columns:1fr}header{flex-wrap:wrap}}
+.step{border:1px solid var(--line);border-radius:12px;padding:14px}
+.num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center;margin-bottom:10px}
+.step b{display:block;margin-bottom:4px}
+.step span{color:var(--muted);font-size:14px}
+.mock{height:112px;white-space:nowrap;border-radius:10px;background:var(--bg);border:1px solid var(--line);margin-bottom:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:10px;font-size:12px}
+.mock .btn{background:var(--blue);color:#fff;border-radius:7px;padding:3px 26px;font-weight:600}
+.mock .row{width:92%;border-radius:6px;padding:3px 8px;font-size:11.5px;display:flex;gap:6px;align-items:center;color:var(--muted)}
+.mock .row i{width:12px;height:12px;border-radius:3px;background:#8e8e93;display:inline-block}
+.mock .row.sel{background:var(--blue);color:#fff;font-weight:600}
+.mock .row.sel i{background:#fff}
+.mock .any{border:1px solid var(--line);background:var(--card);border-radius:7px;padding:3px 16px;font-weight:600;outline:2px solid var(--accent);outline-offset:2px}
+.mock .bar{width:70%;height:6px;border-radius:3px;background:var(--line)}
+pre{position:relative;background:var(--code);color:#e8eaf0;border-radius:10px;padding:16px 96px 16px 18px;margin:12px 0 6px;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-all}
+.copy{position:absolute;top:10px;right:10px;border:0;border-radius:7px;background:var(--accent);color:#fff;font:600 13px -apple-system,sans-serif;padding:5px 12px;cursor:pointer}
+ol{margin:6px 0 0;padding-left:22px}
+li{margin:4px 0}
+kbd{font:13px ui-monospace,Menlo,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--card)}
+.note{color:var(--muted);font-size:14px}
+footer{color:var(--muted);font-size:14px;text-align:center;margin-top:30px}
+a{color:var(--accent)}
+html[lang=en] [data-l=it],html[lang=it] [data-l=en]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKgAAACoCAYAAAB0S6W0AAAogUlEQVR42u2deZxdR3Xnv6fq3vv23luLtdqWZFmWjW1sE2SzOgnBZjAQmAFCEkhmwmfMsGSdTzJkAoQEsjAsISGQZTLsyxB7IAkJmw0xi42NFyzZluVFsqytpV5ev/3eqpo/7n2t57a8dd+WnqR79LnqVi9P9ap+9TtLnXMKMskkk0wyySSTTDLJJJNMMskkk0wyySSTTDLJJJNMMskkk0wyySSTTDLJJJNMMskkk0wyOZlFsjGfduKyxU5/fD0fn622bGlKp9ORMAwzsD4N8X3fBUHgduwoOLjNAXYeWF02S88MlAIowNuwYUNu9erVBSAPeNn0LFo8IL969erChg0bcsm/Vc+8Zwz6FMAU2OCtXFnX+/fvj4BO8v1gZPXq8cHi2BmB56104i1T4gZExJvjg0wer8/FRcYyK85NdKLW/k69vm/fvgcOAe0uwa5evdrbuzdvYVeUsGnfMKv0ETAV69Z57N4tQBNgbO3alSOlFZdpX79AiVzqUBsFxpVSSqQvN3zfmp3OOay1Dphwzu1yzv3YWnNjfWbyh3v33v9o8oOFdevWud27d0eJGXDCgSp9AEyBdT7sVkADyG0699IrPD94rRJeIkqvERGcczhncc6Bc9Y9dqdn8hRzLSCIKBFBRNGdU2vNfof7RtTpfH7nPbd+J1mDIqyzsDvsYVR3OgG0a2Oq5cuXBwcPHmwCwYbznnN1oL23KpEXiNJYa3DOWhyWZIIzTz4FD965LjsqUUoppXHOYq39gYnMR+/b8cPrgeby5cuLBw8eDAFzDMfqlARoD2sSJB8bG8+96Pm+X/yfSukrAaw1zjlnJQZkBsYlBm13rpXSkuD3pna7+Ye77r3t60ABVgN7wx61f9xAqk+ErTk+Pl5oNBrh4OBg8cyNF7/H83MfU0pvsDayzlqbqKIMnMdL/Sdz7ay11lmrlF6vtf+LY+NnjHsq+kGttq8+Pj6ebzQa5lRV8XMqfXR0NH/kyJH6unVbLigODn3c095lxkQ454yI6AwvfUGpRkSU9nwxUfiTemP213bv+snNIyMjlcnJyWbCpPZ4MKk+juDUIyMjhcnJydrZm559TbFS+b9K6Y3GRJEcZcxM+oNSFSDWmEhrb2XgB68dHBrf/ejeB28bGRkpNZvN4xbY08cLnMPDw4WpqanZDedc9MZ8vvApoGyNMSKSBd/7FaiIss4aQfK+H7xqcGj8yKN7H7xpeHi43Gq1zMkO0PngrJ11zkW/nMuV/hbnlHPOkan0kwGmyuGsczjPz101ODQ2tW/vQzcNDw+XjgdI9RKCU7pqfWpqqrlu4wUvL+ZLn3TOKXAOIVPpJxOZxt698/3gpZWB0Qf3P/rwbcPDw8VWqxUtpS26VE6SSp48YFau3bxlaGjkGwLD1lqb2ZsnrftkQYHQmq1OvXTvw/fcAuMeTLR5bKy0rxlUktf1h4eHfa11cdmKtV/S2jszsTkztX4Su0/OOauVyvl+cIWN3JeazU4nOZlekmNRtQTgVIAaHBzMTU1NNVeuOeednpe70ERRlIHzlPDwtTEm8jx/49jyle+Fyc7g4GA+IaXUEyTSBoyKX3M8125PRmvWbH5+sVT+oLXGydE3kMnJb5AqZ6zxPP+iYql0+8EDj947MjISNJtNQ8onTTrdccc5nIODfq7dbnsrVp35CeV565y1jszuPNXsUUQp0co/t9WY/kK1WnWJHZoqQFXaAB0ZGQlmZmZaa9ef+zLPD7aZKLJZOOmU1PXKmMh4fnDB6IqzXgM0h4eHcxxNfu4rgM6FlSYnJz2glC+W3xK/jywl7tTFKOKcdfl88VoKhZGpqanExEsPpGkCVMFIAHRWrt50hdbec6yNHGTseQpDVBljnKf1lrXL118JdIaHh4M0nSUvJXAKoCuV0J+dpVMuV16jRBEZY0XIAHpKm6LOCbigUPpPwFejKNIJi9oEF4vSoGkyqJ6dnXXlcnm1UvpKaw1ZQP50UPOijLWilX7e4NjYWbOzs5ajhXh9oeJj9T446APh8Njqy5T2lltnrQPprRfInlPyEWutVUoPDA6u2AZEgzEWUlHzKgVwCiAVazUgvl+4Iq53yZyj00nRiwiB5z8P8IwxvY7SokCalg2qZ2dnFVDWnnqWcxYRlwXlTytv3qCUPh8YrNVq9cQOjfrFSdKAKxYHl4vIWc7aLMB0WiEUiSuaZV1lePyM2amJ++Yx6IKRkJaKV4ArDgytFNRwXBqcHWuePgoewTmnlCoOFAdXxYAc9PrIBh3QgMvn/BWilCKrVz8do01ORKE8bxVApWJ7GXTBQPUWCU4AKZetqtWwiD+GgHXWZplLpxuJOoeA8tRoAliVRpQolTBTMhjRIhXJNPvpbpAOACrBBItV86mFmeLXEj9boNPdXyJIAJpKHDSVisruYBwsWd+JjJfTVslL8ILumMTVF3HQWNXjJE2ECqDiEjuMzTyvNDe7VnFHMZvavC4NM3kpvudUN6MWMA6mm0KgHZUgntRMFi/GQa0NbSNUAoen4q9JOmsnPSq+bwCa6j7SAvUICh78ygUhLz3TsK7i8DOApiKRg0dqwtcf1nzpXo9qB8p+DNLFrnvaHNp3XT20QC0UNgxb/uKn22xdbsHKceoEdPro+DVDjm3rDL+wJeId3wq445BmIHCLAulSSLoAtTY2GN3C3qUSaEXC6rLlsy9rs3LAETUl6b6aOUppO0jWCRtHHJ9+WZufvy7HA9OKguewC1m+7rpb28cATUE6xvGHV3RYOWgJG4KfhfuXLCKiBKI2DBfh/c8LefVXgr4ba99YdUqgEcKzljlevM5iWxk4j4sKVWDbcNlqy0+tstQ68VpkAJ2/qwVaRrhspUX5bqFWwvHnIlFx2ZWa94hOvtf/hol14LTjp1Za2lb6ashL4MUvPFPZAeNF9xg7qf8wmYDOWTAh2Ch+3DwfVhQoL3n8owFd1393P3Tt+xVFhyTr5xawdu5kAOhih9oI+xCckjCljaBTAxuCV8AVx7Dl5djSMmxhGLxiEsdpolpTSP0QqnYQVT8M7WbMqn4RtBcDvE/URHfFasncLyyRt78D9Ysep7Pg4dg+IYiVPrGDJGa+qAVhA/JDRGu3Ea69nGjFhZihM3H5IZyXf7yxZEFMG2lNo2Z24+2/E/+R7+HtvwNpHonB7Of7Aqjdc+qfHFYoHG4hIb3uutt+B+gi7KBSAN/fp9h9RFg77LDRCTTYlQbTgWYdO7ye9jkvp7PpZZjRjaD1HACxBunUHg+yhHVdfoiotIxo9WW0nv2r6MkHCO7/Grl7r0cd2RUzqpcDa07YvCsPJqqKG/coyj4LCzOdLDboYojXE5hpw3tv9vibq0Ocic/gj+8RZ6LOW9O40jJaz3kr7a3/EVseg9AgYRM6LnF+usrw8Uox6fiKmAgxYQxgEczQmTS3vY3Whb9EbseXyd/2t6jqo5AfimfhOLJpNyivAnjfDZqJBgzl6KtgfaoAtYmLtBA3SYiP4AZy8JVdwhk3erz7BUnNVZh4mku8Q5RSiIugU6Wz+Roa234LO7IWabeQRjVxkBQOS9wPDTzPw/M8tNaohO6tdVhrCMMIY0zys4IShUTt2FzQeVqX/CqdjVdR+MGHyN39RfDzOBVgjVnSUwlJwnraj+M4f3qT5rP3KAZzjsgtrIiou+425VVakrP4xfyecTCYg4/dqdg55fPWSyIuXe7wuw1VlgScLnZc2k2MC2j/zPtpXfA6iMIYmErHetBZBEe+UCCX04ShZXpqhiNHjjA9M0OzUccBxUKRwcEBRkdHGRoeJggUnY6l1WzGm1d54AzSqOIKo9Rf8idEa7eR//a70HYWXSpBFC1diMrFAYgfHxD+8jbN1x5UDPYwZz85qSkfdabjzFkHwwHcuEe4aa/PphHHukFHXi+NBvQ8zWytzpozVvC2d38Ib/3FSH02Bojyjlr+XgljIu66+z5+8MObuf3229n98B6mpqdotdoYE9uRWityuRxDQ0OsW7uWZ134LLY99zls2rQZ7flgGglle2BCJGrT2XINnZGN/OUfvJ2dD+xhcKBMFKVvl4pAx8CeqnDfpNA2MBTEptQJDN70vw16LPtoIIihsXNS2HFY0i8UdQ6lNbVagzVr1nDt732Cwvoz6dSqiE6mxhnQBXAOXf0R0cEbCO+5nY1S49zLNMEVAVqvjM2DhPHii28dURTRCfcShQ8T3vsNrDqfYOWLMZVL45CTac4F+l29ir9iCy//H5/kTb/ya+y8dRcDAxWiKJp73TRVvKfiDZ/X9F2CSF/HQecTslZCwXMYk3KrksTmbLUbbF4/zmc+9XHOPHM9M9UqSntH34NXQRq70Ie+jFRvp0SHbVtHUN4gJEB8ojYq8c3CAiJYY2g178Xu3oGUz8Usfw2udC6Yevyz2qNTr7J5/TKu/9wneMMb3sT9D+ymUiymbpMKoLSglWBSc9mXIMbUzwyqFXRCx3TLUikqRgY1vpYkkJzOMsUdUAp84MMfZP1ZZzE1XcXz/GSiFagANfFP6EPXIdEkzl+OqZwX1Wbu8HCdZzYSASUF8EDq9+E99D7M+Muxy65JQkwGpX1mqg2Wr1jBhz/yYd527Ztot5so7adi23TnLjIwNWs4UjWU8kLOl8Wr+JOFQVNJWFYw23SMD2ne8qoKP31xkWUjGl+lCFBRuGgWffZvkFtzEdWZKp7XtTc1iKD3fgI1dQMiCjv0U0atfHVbymdb98CH8jJ9i+dU8RmyRlJfoQvgLPrgF1GtPUSr3wzigYvwPI/Z6iwbNp3DdZ/+I6L7/hjlleKAfloAtTAxHXHjHU0++W9V9h6OGCiqRYF0afiz3xjUxTHwat1yyeY8H33bOOtXBXTalihKU8VrMLO4ZVcSrbyaTmO2R63HZ+36kY+hpm8Cr4xbfk1HLb+6gwogbAjewOIKJLpg8waRmR/i2TbR2rfH48KgtEenOYsefxG55l3Ioa+CNxDbwymp+NFKwAUb8rz6BWXe/tEJvntnk8GSwhj6KvF2CY46F5GwrIRG03LuuoB/+O/LGSopJqcitE6x2l4EXAhqGLPyjTjTQVTPSYAKYuacvgn8IVjzppaMXB7hLG76Vo9HvxDQ3q+cyi+eM5yJQTp7O97ejxGtedsceEUpbNQiXP4G9NStEE7GVd0phTFC46g1I8YGNH//28t57Xv2c/v9bUoFWVjOcXfdXbo82ldVPi5xNn7/l0YYG9RUGxbfi8/lJbVHIbaBW/FKyJ+B2HZMGc6CLqEO/wtq6gbQZVjzxhicpi1u/z8GPPihPJ0DCpVPL6bSBenMzehD14EuJossiAshGMWteA1i2/HYU5oHJeB7Qr3lKOWFd71xFN9LPSH+1AGoEmi0HBdvynH5eQVm6jE4U44Cxtm5uVXYsZ8D04rDPFjQ+cRbvz6+MWfFNR0ZuSIG56OfDWT/FwNUDiSXvrXlDOgK6vBXkdrdsY2KTUJRDezoi6FwVjzelPWvp6HacFy0Mce2rQXqTYtSGUCP4bMInchx0cY8uZzgliJjQRTYFnb0ReAPx6q+p0OgOvhlJJrEDlxkWHZVKM7iDn7Vl4mv+c4bWEJXgDkW1we/lIxL9YC3jB37GXDtZEOlb5Z5nvDsTXkiS+px174BaBotpUcH1NIdtSVMZYefH4NAVKLai0j1dtTs7Th/uZMVr+qIzjk782NPDlwfOF1J3bY6poevC0j9PtT0D4+qelFgO9ihbeCPxLmoqe+NGJCjA+oxptZCHtvfDNpT1bnAp9qwS+NEJuzpyudAYR3YzlH2dAY9dSPiOriBrUYqGw1RQ9j3hcDJcawndfGtPWrqxtgUkaSDoe1AbiWuvBVsK30WTRyvasPGBw+PcXqe4XOqqnjnHJ6GnzzYJorcEiRKCLgIV7koiTkmiQMqh7T2IPV7cN4QMnO75x74cN7t+3xAa79CgiVU68fQQSqPNB9AGrtAde1dF8dtBy7uiWamOzfOwl0PtOPUxj4qCOsbgFoLpbzi5h0t7nqwTbkgmDRzJZwFlcOVNyeqU+KFUB4y+5M4gSNxmGT6Zo/D3/JjgBznxZKYMVXtrthJcgn7uwhX2pSo/vQmxlgo5oWdezt8964GpbzqK0++r8JMSkG7Y/njT09iHQQ+RCaNCs+YPfGGcblVR50jidU79XtxaJx1OCcYKWAlnyR9cHwf63B4uNrOWLV3NYmNcLkV4I/1OHeL8xciE2st3xPe9+kjzNQsnj6V0+0WmW9nLVSKwnfurPPWDx/kA29ZxnBF02hZFp15ZiPwR8Gr9DCQRswsBXcQcsExzIoT4c0KuACYoGmmsXow3lwY0CVsMI609oLOLUoVawUDFU0rdPzGXx3kn39YY7CsFpE8sjRuUur5oIu1lSMDgyXFP353ll2PhrzllUNs21JgsKLRC8WLKDCWqDCKkRzYenx3itKE9Wke3HM4mVjTN8zh3CSj45MEg6M40y1r9vDyY/gtFzexWmADOevi4+Qb7qjxV9dP8aN7Wwx0jzkX4We5k6JoLgX9YBKQ7ni4zZv//ABrlvmcMeYReLIg8CutmK3O8JKrDW/9LWG2Gh+llwoeO+4+zFvetYsgCI56sCfc1FE06nU+8IGDvOD5m5mtxatfqcDffRuu+8IjVAaH4zS8BRB0ZBz7j0TsORiiROIz+NMlmylV4z0X51NOTBv2HYkWjH2tNUeONNi6zcf3jvrBSoR6o0EnjPCDHLZPACoIobHU6o3YP0rG5Ws4WPX4zl0NRkfzcxn8C8AonhYqRTU31/0qfZ6wHAPUVwZ/Ea6lFmiriJyYJ0gsTsqb++QARcmxy60dkBNLWUWUxGBkETpZKRwq0Uiur9b9pGBQlODaEbYdoUdLeGOluNPVAuZAa40/5tOpeNieVsLWOQqFAsoJJjR9o+Kx8VMsFJJqZYnHZqFd1Pgbl+MNDSELNRqNI5qsYw7XEV8jea+/iuH7GqBJ/29b6+CvHWbwNRdSePYa9FAhppUFxKk1Qtm2keIGokaEKIUAph0yetYZnPm+V/VVaEWA0BnGz11H1Arn6D2qG9zLNrL6ha9lQBUwz9Qj6c6ddZhqi9Yde5n50h10HjiMKucWD9J+LZpr9AaZEqZf6FhFKcxsi9Jzz2T8934GPVzANUNcZI9OoHvm86ascMTU6TiDShotRNYwXKgwtnktU6aBJ5oTfUmzAAbHgAoYKw8RGTOXzhI5w+GohrKCW2jL6W6p1XCRylXnUXr+Bib+7NvUvrUTNbDwrg1zcdxT2gZVgm20yZ+/kuXv/rm4E8dUE9GyqKNPh8MXxURYo2paVFQOg8NgqUieFVGRg61JPAk48beICx0Xsi43wJAUiIhzQxVC3bY5GFXxZPEJNS6y2OkmKtAse+fPYmstGj/agyrlFpgUujRd6vvrWgLnwFOMvvlyJPBw7QjxFt9jM26ro5g0dfaF0wTiJV0wwBfN5sJKjDik652cwEcpIRLLOYUV5JWfdOpw+KI5EM0yEdXw02B6AfEULozt2JE3X44q+H2Xsdw/AFWCa4Tkt64kd+4KbL2TalMmJYqWi7indQBfFM45VGLrXVhYRUECTB9YovGm8bgovwbjbGIyOgLR3Nc6SM220WlmM2mFa4Tkzh6jcPEabKO/Wiz3UYdlwUWW3DnLkECn7lE759Aobm3uIXQ2rllHaLuQM4Mxzskvo+VC1AmMNXXHc1Ywxjm5o+ORxEy5tbkbQdKfG2LNlTt3ORh36iYsp5GxrCq5JYlHWhwF5bG9tZ/d4SS5RM27RM1fWd6MdSf2kvsuo7+4vImC8jHJ+ALlsS+c4Y7mXgrip24nS7J2qpybs7T6JWNZpQ+Dxf0xM62li6mJZto0+E7tfvLiY51LnI8OzymuZ2v+DOquc0JYVCE0XciG3DKeV9pA3XbQCNZZCuJzU/1BDkU1fKVTN0RcglJbbSXs/MzXbX7z9+appuKdc+Ar2vcdjJ2jJVAz1jny4vP12XvmwkpdFadRvG7oEry4x/AJ8xFfN3RJj3MEWhQ12+Ffq9sJRC/JcayIQGRp3XMAtPTPgUVfOUnWoQo+rbv307p7f6xuIpsyU8QAfbhzhH+d3U5Z5TBYFELDhZyXP4NXDV5E1bbxjuPUeChmbJOrB7ZySWEtDRuzuHGWssrx7dp93Ns+QHEpwmDGIkWf9v0TNH+8F1UM+upUqb/CTCJgHUc+dhO20UEKfhygT3FHW2KV+fmp29gfzhDgJQwq1Gybnx+8iCuKZzFlm8cFpF1wPruwltcPX0o9AWfXNp6KGnx68hYC8dJtDuscLrJIzgPjOPxX/45rh/11SdKSAHQx6eTGIgWP1j37OfDOf8LOtvBGikjg8Zj7EBfxOImdjgNRlb+f+gFF5WPnYn+OCMN/G3shlxTWMm2b6CUEaRecW3IrecfYlUc9asBYQ1nl+OT0LewOJ8krHyculTlABPF1fErXjjjwrn+hedseVNFP7j13fVM0t5i73CQBuIfv5whDypXh53pecLlz1sXdDxZmsUveo/PwJPXv7IrDQwN5VM5LEOYWGSmIbay8+Nzd2MfqwjDnV9ZQD1t4ojA4PNE8t3gm+8MZ7m8fIq/8OVZLyyEShGnb4uLCWn57/KcpqIDQGTQSH8Hmy/x74wE+cuDbVLx8PHTrUnn/GIs5Uqf27Z1M/Ok3ad31aBpn8U6UUiaKbqvNTn0H3xeiqE2cBW4XvomXwCNc9EIah5QCwsN1Jj54A3qogB4pxadKKRU1CkLkDL+pv8qqj3yc884/j5mZKr7nETqDJ4rfHL+StcEw183cicXN2YDW2aPjcE9jGyc/K6ISb72DBV458CxeP3wpAB0XoRHCyFCplNj10MO8/b++mdl2g6gdEkYR5XJpcelxyTicsZjJBmaqgeQ8pJxLpVHGUtTF92+6nXWIr1C5Ai6yRPuqqW8krRRTjSZvfsvb+OIXPsOKFSuYna3ha4VxFovj9UOXsjV/Bp+dvpV7WgfwlKZQyKNUfBoVL6w79i0fCKLinFZnLc1Wi9BGbMgt43VDl3BJYS1125mzgSNjKZVLTM/M8OZr38qh7btp1Ou8+tWv4rzztvCe9/wRg0OD6exQLejBQjx+278tlvuqaO7x5BNfH+hMB2sj0k5EsNaRL3jcv/1OXvvqV/GZT/0Dq9auZ7YZ4iXOQtW2OC93Bu9adhXfaz7EN47czY7tO2k1m/h+QBD48Q0foo7ixsUhLWMiwk5IGHYIcjk2n72RK8e28rzi2RSUz6xtJ8peiKyjWPCZPPAIv/jLv8Ldd9yJ9QKufuXVfPCjH2CwXABf8Yfv/SPKeW9RGWOxP+qjbS6pvk4zYdmeHgwqShO1auAshfH15EdXoXRA+o0LHGOex8RMlWv/+B/48Ht/h7NGc1RbFqUEjaKRBO9fXNrE5bkzuXtmO9/73ve548472bv3UarVKp1OZ87ZUkrh+z4DlQqrVq/iggvO5/Jt27hg1fkU/Tx1236Mt24sVHLCvmrIO973f9gbDjFy0VU8d/MKPvonfwAoDh2p8uvvuBbl+Xzkc99ksFxISpQX8I5NSGtqH41DD8d9mQoVnDX9iYNF/q4GclAcgIZbsWLdr+cK5d+xNjJx14GFgzOsTzO04VLW/dy1DJ39XLxieeluZXHgeVBvQgHDmy40bFsV0oyE0DJXTWqdQ4lQKBTwfaHZDDl85DAThyaYmpqi0Wgk19AUGBoeZtn4OGNjYxSKAVHkaDabWGtjto1NbXwFRc/xowMef3eHR91orAcXjcPbLoOo3SSK4s1irWVooMT1O4XPbYeSvzAWdQ5Mq8HMQ7ew+9/+msl7bsIvDuIW03/KOaO0p1utxscP7n/o3RQKQrM5A3SABau/vmJQ1wVnY5ozLn8d5/7i+1C+R9QC23FLesJjOpBTio7V/MWtmh2HFa/c1GG04KiHgnFxkR1AvV6Ps6GUYnRklOXLlqO1mttAzoExliiKCKOI9lQ7vshLKUQUJqkargSOalv40r0B//agj6ehHcLFIyHXnt8mbDgMau6CMKUUU9U6/2EtmLbPZ7cHlP1nfjuxIIhXZHTrCxnd8kLu+/y7eeSGv8ErDuGs6acGy2nfNMeCb5qbU+vNGUbPv5Itb/wzTMdh2gbRcU6oLPHU2QQ4BR++8ZDHnYc0L9sQcvmqiIHA0TZCxwCi5orswjCk0+kkwEwuRkyQ2r3hQyXn5zZhzLzvaETCjbs9vrIr4NFZoRLE9xddvjriP18Yt1+07vFxc60UsyG8YlMECJ/bEVDyF3A7nHNEDYsoYfMv/AGd2iEO/Oj/xUy6IHXfXfdT2AZ11qCDAhte8fuxE2AsovVxZ3EclAOYaQl/f2fAtx72eN6aiGevMCwvWZRAZGP1b93RbP9jmSBK4lo/X8dtdCYaihv2eHx3j8eDM4pAxfdBxSUosG7QUgkcU015wnRYJTDbEV6xKQSBz20PKAXxjcXumfCo0jhrsaHj7GveyeSO72KiNiKafmmA0zcAFaWJGlVGt76YyuoNRC2LKH3CxmNdF1iwr6b41N0B/7TLcc6IZeu44awhw3jRUfDjS7GOcRs3xgrNEA40hYemPe6eUNw7qTnSFAIF5cSG7JYBFTz47PYA54RXbOow23nia8nnQLoxvuT9czsCigtgUlEK07GUlq9kZMsLOHDLdfilob5xmvrmvnicYE1EZc1WxHN9sYNdYk8GGnIaWpFwy37Nzfs0BR9G8o7RgmU476gEjlyyn9oGaqEw1RSONBWTLaERxgyb01BJGHN++NEROz6f2+GDOF6xMXx6IN0UogS+cE9AoBf4TpWjsuZ89v/wy4tYw57Pm30J0MXEQePf8/LlJbc1F+L1JtXQlPyjDDvREPbX9DFvYpYe9e6p2GTovtZTxcVLQay2cfCKTU8N0mpHeOU5IW0jfPk+n9KC7nwXvMJAMvMLWcOTpHHDwocZ/2Zn9jD9eq7RZdSu+IqnZKwuuJ8uYByxLVkKYrWN8PSYtC285KyQ7+/1ONwUfPVMPXtHp3oouVBbFkwxfd4CfHE0JV6O6QdvxbT7q5H/ky6Ie/JnwZrSHWXS63f6VAL3hCCXxI4t+Y71g4bQPNNCWMFGwvQDtyDa5/h1lD6JAOqcxcuVmHnox0zeexNeSWFNxOkqjwHpjoDr739ykPai9ZlsCmci/KJi+oE7mdz5fXSujOuj0uM+C9Q7RDQ7v/hOBtZeRzAwTDjXqkZOT5B2Haft8S1z1/So+97rvxXQCGH3jCJIQlpPhlSHA2vReY+wUee+L/wuzhjEk+RESU5RgC4mcdU5dFCgvn8Xt3/kDZz/Xz5KedWZ2DC5ENhxWooA5Tx8/t4c2vN55aaQatsRhfGVNJ7nMVRQfPEen/0NNeckPRnElBZ0oGgcepS7//btVB+6A+8xQfoFOEku/cyovksWcdbgFSpU99zFj95/Daue/3rGLngJ+eE1iA5OW5UvQAB8+laozXS46hyPoeEhAGamZ/jM9g7X7czhKeh0ngJeNqQ9/SiH7/4me7/zGdozB+eBs39kCY46F090zhp0vkTUbvDAVz/Iw1//OH55GFEep7N0GfH7HcdHxops3bIZUYrt2+9lz0SNQiBPK1DvrCGqTxG16uh8GV2oYFMAp+t3gKbLpBa0xi+P4JwlrM/01f09J1J8gT27J7h/504AcrkcOU/RebotBUQQ5c3Nbb+m2i0RQFMM2Do3lwJ2vM/k+915ymkoFPKx5rL2mWfJOoezUX+u+5IB1C7ZODP2PAYcTL8xn3uMJZKKpH3po8mgc3qLiKR6262X6t6xtr40d0lmcrKItW42xoP0DUAdNBygI2enrHO4hd4wlclJbnZYjAunY4ZqpGKTqdTGBiqKOodcXIersuU67UQ554g60cFk/VPpCa5SAKYj7h6honbjkHNu5mjHyUxOI59NrLUtE7b3ExdTpnKgn5KKxwKq1WodcdbuUVoPubhAJ1P1pwlARUSctY82GtUug6YS0/EWCcweFs0B7bo1ZofneRfEqj7D52kEUIyL7gFmk6+lkj2Rloq30I4AOlH7loQ8M3SeRvgEMFH4IyCCfHJX3uJZ1EsPoERAvjYzc0c+X5pSooaTpK8MqKe8/alUZG2jVq3eGmOq1egB5wn34nsBijHtfdZEP5C4PsFm63fKixUlztno1k6n8XCCqagfbNBjATQEaDcb/+J5wVU4l4WbTn0RnJN2q/nPHG1zE/ULg/aqeJMM0KtWj9xsomiHxCnfGYueyuwpIsaYh2empm5KCK/D0aa1JzwOyjyAhsnumW2165/JzM/TgD5FJGw3Pg/RkR6SMqSUNpTmSVIXoC3Ar04f/lZkou0iSmUsesqyp4pM9NDU5OQ/A36y9hGLbPvdK2klWfa26NcJ1RtRcjjIFV4aN5XKwk6nmPNuEVH1+uz7O+36XQkw60A7TRs07SzgLkgVUArbrUdyucIKz/O3OOcM2Rn9qQJOo5TWUaf9jenJgx9P1rxK3PAm7EcG7YKzazZ0QZrvtBt35wrl5yulRpJBZ0x60qt2pa01ByanD/2uM2YWaMxjz9RqcJeijqJX3fvOuRBr7/NzxZ8VEX8emDM5yagz+WjqszO/127Vd3Sd4sT+XFQ35eOl4ud/XgjDzkHteROBn3tRz+AzkJ584HQiSjWbs39em538WrKGMwmDdtK0PZeSQeczqQNK7VZjp+f7Nd8PtvUUGGUgPZnAqZRqtWp/PTN1+NOJCdcFZ6vH9kw1zVIvITh7P3dAsdVs/ER5ft33g20ubqhmT8ueNieZzQmIiFKtVuOvZyYP/e8ecNYTx2h+cL7vATrfZqGHSX+ilD7ge/5zRJSPcwYk8+771FsXURqHaTVr/6s6NfHZHnDWesAZsUSxbn0cwOnm7cZCp93caY27y/eD87T2RpLk5izzqb9Y0ymltbNuX702/a7a7NTXk/WZ7mHO+V67O5kA+jgbhqMnTrkoah9st+r/7vu5iva8c+Jze2czoPaHIyQiEoWdb0zNHHpvu9W4J/l+L3O259mdS1LicyIA2gWp75wLm83a9wS53/O8NVrr8R6bNXOkjvPaiIhSSomx0YPtRu1D01OHPpnEOcN5Nmd7Ke3OJ3JmlvL/UBw9As0BeaAAlJMHYHBgYOxFuULhFUrpjUjcn8kdnYDeG+MzWQQgexs/CyhRcb9wY6KHwnb7KzMzE98EJpO5riVP11vv8NjTIrfU4OE4glQlIA0SoBZ6gJpP3vBQeWDo0iBXvFIrfaEoXelOqzt6F3V/XANycsncAUr3gjEAa2zdWXNXq934Vn126pYeYLbnAbPdA057PMB5vNVn7zm9R5z90gvUPFBKvuaAwPfzq3KF4gW+H1yolD5bRK1USgrx5esZlT4jbzX5y1rbcs4dsMY+YKLOnc1m/a4wbD2SAFASAHZVeesYrGmOJ0HICdrFvSq/q/aDBKRdwOZ67FEPqPh+bsz3/WXKC8aVkkERVcLhZ2z6pPMdOWzdWle1UWciDMNDYdieID6e7G1v1+4BZXseY0akmITczwDt/T/VMYAazHtyyeNztFvF/NeRPnhPfUma8z6f73TaBHy9YOx9onnAtMd47VMSoI+ziY4B1K4J4Pd83vs9zdGsqQygTwzOXpu9W/UQ9Txhz8dw3vfmM6bjBLIZfQbU7kfdA8jepzelLwPlU4PV9bBgF3hRj03ZBa7tF2D2G9vIE4D1iR6Z92Ty5CB185j0iZ75oHT9Aox+M+w5BgjlCYCZAfTps+hTPX0BypPJXpMncYgy2/OZ26JP5Di5fgfAyRY6ySQ94GaSSSaZZJJJJplkkkkmmWSSSSaZZJJJJplkkkkmmWSSSSaZZJJJJqeR/H+kqLfWCNT5GwAAAABJRU5ErkJggg==" alt="">
+  <div>
+    <h1 data-l="en">Opening FLeeker for the first time</h1>
+    <h1 data-l="it">Aprire FLeeker la prima volta</h1>
+    <p class="lead" data-l="en">If your Mac says it can't open FLeeker, don't worry: nothing is broken. You only need to allow it once.</p>
+    <p class="lead" data-l="it">Se il Mac dice che non può aprire FLeeker, tranquillo: non è rotto niente. Basta dargli il permesso una volta sola.</p>
+  </div>
+  <div class="lang"><button id="b-en" onclick="setLang('en')">English</button><button id="b-it" onclick="setLang('it')">Italiano</button></div>
+</header>
+
+<div class="card">
+  <h2><span data-l="en">Why does this happen?</span><span data-l="it">Perché succede?</span></h2>
+  <p class="sub" style="margin:0" data-l="en">FLeeker is a free app made by an independent developer. macOS shows this warning for every app that isn't sold through Apple's paid developer program, the first time you open it. Once you allow it, FLeeker opens normally with a double-click, forever.</p>
+  <p class="sub" style="margin:0" data-l="it">FLeeker è un'app gratuita fatta da uno sviluppatore indipendente. macOS mostra questo avviso, la prima volta che la apri, per tutte le app che non passano dal programma a pagamento di Apple. Dopo averle dato il permesso, FLeeker si apre normalmente con un doppio clic, per sempre.</p>
+</div>
+
+<div class="card">
+  <h2><span class="tag" data-l="en">macOS 15 Sequoia or later</span><span class="tag" data-l="it">macOS 15 Sequoia o successivo</span>
+      <span data-l="en">Allow it in System Settings</span><span data-l="it">Dai il permesso dalle Impostazioni</span></h2>
+  <p class="sub" data-l="en">First make sure you dragged FLeeker into the Applications folder (don't open it from the disk image).</p>
+  <p class="sub" data-l="it">Prima controlla di aver trascinato FLeeker nella cartella Applicazioni (non aprirla direttamente dal disco .dmg).</p>
+  <div class="steps">
+    <div class="step">
+      <div class="mock"><div class="bar"></div><div class="bar" style="width:50%"></div><div class="btn">OK</div></div>
+      <div class="num">1</div>
+      <b data-l="en">Try to open FLeeker</b><b data-l="it">Prova ad aprire FLeeker</b>
+      <span data-l="en">Double-click it in Applications. macOS blocks it: close the message with OK or Done.</span>
+      <span data-l="it">Fai doppio clic su FLeeker in Applicazioni. macOS la blocca: chiudi il messaggio con OK o Fine.</span>
+    </div>
+    <div class="step">
+      <div class="mock"><div class="row"><i></i><span data-l="en">General</span><span data-l="it">Generali</span></div><div class="row sel"><i></i><span data-l="en">Privacy &amp; Security</span><span data-l="it">Privacy e sicurezza</span></div><div class="row"><i></i><span data-l="en">Desktop &amp; Dock</span><span data-l="it">Scrivania e Dock</span></div></div>
+      <div class="num">2</div>
+      <b data-l="en">Open System Settings</b><b data-l="it">Apri Impostazioni di Sistema</b>
+      <span data-l="en">Apple menu › System Settings › Privacy &amp; Security (in the sidebar).</span>
+      <span data-l="it">Menu Apple › Impostazioni di Sistema › Privacy e sicurezza (nella barra a sinistra).</span>
+    </div>
+    <div class="step">
+      <div class="mock"><span data-l="en">“FLeeker” was blocked</span><span data-l="it">“FLeeker” è stata bloccata</span><div class="any" data-l="en">Open Anyway</div><div class="any" data-l="it">Apri comunque</div></div>
+      <div class="num">3</div>
+      <b data-l="en">Click Open Anyway</b><b data-l="it">Clicca Apri comunque</b>
+      <span data-l="en">Scroll down to Security. Click Open Anyway, enter your Mac password, then Open.</span>
+      <span data-l="it">Scorri fino a Sicurezza. Clicca Apri comunque, scrivi la password del Mac, poi Apri.</span>
+    </div>
+  </div>
+  <p class="note" data-l="en">Don't see the button? It appears only for about an hour after step 1. Just repeat step 1 and look again.</p>
+  <p class="note" data-l="it">Non vedi il pulsante? Compare solo per circa un'ora dopo il passo 1. Ripeti il passo 1 e guarda di nuovo.</p>
+</div>
+
+<div class="card">
+  <h2><span class="tag grey" data-l="en">macOS 14 or older</span><span class="tag grey" data-l="it">macOS 14 o precedente</span>
+      <span data-l="en">Right-click › Open</span><span data-l="it">Clic destro › Apri</span></h2>
+  <ol>
+    <li data-l="en">Open the Applications folder and find FLeeker.</li><li data-l="it">Apri la cartella Applicazioni e trova FLeeker.</li>
+    <li data-l="en">Right-click it (or <kbd>control</kbd>-click) and choose <b>Open</b>.</li><li data-l="it">Fai clic destro (o <kbd>control</kbd>-clic) e scegli <b>Apri</b>.</li>
+    <li data-l="en">In the message that appears, click <b>Open</b> again.</li><li data-l="it">Nel messaggio che compare, clicca di nuovo <b>Apri</b>.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2><span class="tag grey" data-l="en">Any macOS</span><span class="tag grey" data-l="it">Qualsiasi macOS</span>
+      <span data-l="en">The one-line fix with Terminal</span><span data-l="it">La soluzione in una riga col Terminale</span></h2>
+  <p class="sub" data-l="en">If nothing else works: open <b>Terminal</b> (press <kbd>⌘</kbd> <kbd>space</kbd>, type “Terminal”, press <kbd>return</kbd>), paste this line and press <kbd>return</kbd>. It removes the “downloaded from the internet” mark from FLeeker and opens it.</p>
+  <p class="sub" data-l="it">Se non funziona niente: apri il <b>Terminale</b> (premi <kbd>⌘</kbd> <kbd>spazio</kbd>, scrivi “Terminale”, premi <kbd>invio</kbd>), incolla questa riga e premi <kbd>invio</kbd>. Toglie a FLeeker il segno “scaricato da internet” e la apre.</p>
+  <pre id="cmd">xattr -dr com.apple.quarantine "/Applications/FLeeker.app" &amp;&amp; open "/Applications/FLeeker.app"<button class="copy" onclick="copyCmd(this)"><span data-l="en">Copy</span><span data-l="it">Copia</span></button></pre>
+  <p class="note" data-l="en">It only changes FLeeker, nothing else on your Mac.</p>
+  <p class="note" data-l="it">Modifica solo FLeeker, nient'altro sul Mac.</p>
+</div>
+
+<div class="card">
+  <h2><span data-l="en">After it opens</span><span data-l="it">Dopo che si è aperta</span></h2>
+  <p class="sub" style="margin:0" data-l="en">A short welcome guide shows you how FLeeker finds your lost FL Studio favorites. You can reopen it anytime with the ? button.</p>
+  <p class="sub" style="margin:0" data-l="it">Una breve guida di benvenuto ti mostra come FLeeker ritrova i preferiti persi di FL Studio. Puoi riaprirla quando vuoi col pulsante ?.</p>
+</div>
+
+<footer>
+  <span data-l="en">FLeeker is free and open source:</span><span data-l="it">FLeeker è gratuita e open source:</span>
+  <a href="https://github.com/mattdanieli/FLeeker">github.com/mattdanieli/FLeeker</a>
+</footer>
+</div>
+<script>
+function setLang(l){document.documentElement.lang=l;for(const x of ['en','it'])document.getElementById('b-'+x).classList.toggle('on',x===l)}
+setLang((navigator.language||'en').toLowerCase().startsWith('it')?'it':'en');
+function copyCmd(b){const t=document.getElementById('cmd').firstChild.textContent.trim();
+  const done=()=>{const s=b.innerHTML;b.textContent='✓';setTimeout(()=>b.innerHTML=s,1500)};
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,()=>fallback(t,done))}else fallback(t,done)}
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){}a.remove()}
+</script>
+</body>
+</html>
