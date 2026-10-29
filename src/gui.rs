@@ -19,6 +19,8 @@ use crate::engine::plan::{self, Action, EntryInfo, Reason, Row, Status, Summary}
 use crate::engine::scan::Progress;
 use crate::engine::system;
 use crate::i18n;
+
+mod welcome;
 use crate::engine::tags::{self, BackupInfo, TagsFile};
 use crate::engine::{self, Loaded, SearchOutput};
 
@@ -269,6 +271,8 @@ struct Settings {
     /// Lingua scelta dall'utente (si parte sempre in inglese). Il vecchio campo `lang`
     /// non viene piu letto, cosi anche chi aveva l'italiano automatico riparte in inglese.
     language: Lang,
+    /// La guida di benvenuto e gia stata vista (si apre da sola solo la prima volta).
+    welcome_seen: bool,
     /// Si riparte sempre in anteprima, per sicurezza.
     #[serde(skip)]
     test_mode: bool,
@@ -276,7 +280,7 @@ struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        Settings { tags_path: String::new(), folders: vec![], use_hash: true, dark: true, language: Lang::En, test_mode: true }
+        Settings { tags_path: String::new(), folders: vec![], use_hash: true, dark: true, language: Lang::En, welcome_seen: false, test_mode: true }
     }
 }
 
@@ -375,6 +379,8 @@ pub struct App {
     dialog: Dialog,
     fl_running: Arc<AtomicBool>,
     load_error: Option<String>,
+    logo: egui::TextureHandle,
+    welcome: Option<welcome::Welcome>,
 }
 
 impl App {
@@ -397,6 +403,8 @@ impl App {
             });
         }
 
+        let welcome = (!settings.welcome_seen && std::env::var_os("FLEEKER_NO_WELCOME").is_none())
+            .then(welcome::Welcome::new);
         let mut app = App {
             lang: settings.language,
             pal: if settings.dark { DARK } else { LIGHT },
@@ -413,6 +421,8 @@ impl App {
             dialog: Dialog::None,
             fl_running,
             load_error: None,
+            logo: logo_texture(&cc.egui_ctx),
+            welcome,
         };
         apply_style(&cc.egui_ctx, &app.pal, app.settings.dark);
 
@@ -810,6 +820,13 @@ fn fmt_num(n: u64) -> String {
     out
 }
 
+/// Il logo (la stessa immagine dell'icona) come texture.
+fn logo_texture(ctx: &egui::Context) -> egui::TextureHandle {
+    let icon = app_icon();
+    let img = egui::ColorImage::from_rgba_unmultiplied([icon.width as usize, icon.height as usize], &icon.rgba);
+    ctx.load_texture("logo", img, egui::TextureOptions::LINEAR)
+}
+
 fn app_icon() -> egui::IconData {
     eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png")).unwrap_or_default()
 }
@@ -868,6 +885,7 @@ impl eframe::App for App {
             .show(ui, |ui| self.central(ui, &ctx));
 
         self.dialogs(&ctx);
+        self.welcome_ui(&ctx);
         self.drop_overlay(&ctx);
     }
 }
@@ -902,9 +920,7 @@ impl App {
     fn top_bar(&mut self, ui: &mut egui::Ui) {
         let p = self.pal;
         ui.horizontal(|ui| {
-            let (rect, _) = ui.allocate_exact_size(Vec2::splat(40.0), Sense::hover());
-            ui.painter().rect_filled(rect, CornerRadius::same(10), tint(p.accent, 40));
-            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, "★", FontId::proportional(24.0), p.accent);
+            ui.add(egui::Image::new(&self.logo).fit_to_exact_size(Vec2::splat(44.0)));
             ui.vertical(|ui| {
                 ui.spacing_mut().item_spacing.y = 0.0;
                 ui.horizontal(|ui| {
@@ -932,6 +948,13 @@ impl App {
                     self.settings.dark = !self.settings.dark;
                     self.pal = if self.settings.dark { DARK } else { LIGHT };
                     apply_style(ui.ctx(), &self.pal, self.settings.dark);
+                }
+                if ui
+                    .add(egui::Button::new(RichText::new("?").font(bold(16.0))).min_size(Vec2::splat(34.0)))
+                    .on_hover_text(self.l("Welcome guide", "Guida di benvenuto"))
+                    .clicked()
+                {
+                    self.welcome = Some(welcome::Welcome::new());
                 }
                 // selettore lingua
                 let label = RichText::new(format!("🌐  {}  ⏷", self.lang.code())).font(bold(12.5));

@@ -9,7 +9,7 @@ Find the samples you moved or renamed and repair your FL Studio browser favorite
 <p align="center">
   <a href="../../releases/latest/download/FLeeker-windows.exe"><img alt="Download for Windows" src="https://img.shields.io/badge/Download-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white"></a>
   &nbsp;
-  <a href="../../releases/latest/download/FLeeker-macos.zip"><img alt="Download for macOS" src="https://img.shields.io/badge/Download-macOS-111111?style=for-the-badge&logo=apple&logoColor=white"></a>
+  <a href="../../releases/latest/download/FLeeker-macos.dmg"><img alt="Download for macOS" src="https://img.shields.io/badge/Download-macOS-111111?style=for-the-badge&logo=apple&logoColor=white"></a>
 </p>
 <p align="center"><sub>Free · Open source · Windows 10/11 and macOS 11+ (Apple Silicon &amp; Intel) · <a href="../../releases">All versions</a></sub></p>
 
@@ -47,6 +47,7 @@ FLeeker reads FL Studio's favorites file, finds every favorite that points to a 
 - **Fast:** written in Rust, scans thousands of folders in parallel on all CPU cores
 - **6 languages:** English, 中文 (Chinese), Deutsch, Español, Français, Italiano (switch from the 🌐 menu)
 - **Clean interface:** dark & light themes, filters, search, drag & drop, resizable panels
+- **Welcome guide:** a short illustrated tour on first launch (reopen it anytime with the **?** button)
 - **Portable:** a single file, no installation, no internet connection, no account
 
 ## Download
@@ -54,7 +55,7 @@ FLeeker reads FL Studio's favorites file, finds every favorite that points to a 
 | System | Download |
 |---|---|
 | Windows 10 / 11 | **[FLeeker-windows.exe](../../releases/latest/download/FLeeker-windows.exe)** |
-| macOS 11+ (Apple Silicon & Intel) | **[FLeeker-macos.zip](../../releases/latest/download/FLeeker-macos.zip)** |
+| macOS 11+ (Apple Silicon & Intel) | **[FLeeker-macos.dmg](../../releases/latest/download/FLeeker-macos.dmg)** (or **[.zip](../../releases/latest/download/FLeeker-macos.zip)**) |
 
 Older versions and release notes: **[Releases](../../releases)**.
 
@@ -62,7 +63,7 @@ Older versions and release notes: **[Releases](../../releases)**.
 > Click **More info → Run anyway**. The app is not code-signed (signing certificates are expensive),
 > but the full source code is right here.
 >
-> **macOS:** unzip, move **FLeeker.app** to Applications, then **right-click → Open** the first time.
+> **macOS:** open the `.dmg` and drag **FLeeker** onto the **Applications** folder, then **right-click → Open** it the first time.
 > On macOS 15+ you may need **System Settings → Privacy & Security → Open Anyway**.
 
 ## How to use it

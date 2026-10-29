@@ -3,13 +3,20 @@ name: Build
 # - Every push to main and every pull request: builds Windows + macOS.
 #   The downloads appear under "Artifacts" at the bottom of the run page (Actions tab).
 # - Push to main with a new version in Cargo.toml: creates the release vX.Y.Z with
-#   both downloads attached (the README download buttons always point to the latest one).
+#   the downloads attached (the README download buttons always point to the latest one).
+# - Run it by hand (Actions > Build > Run workflow) with "Replace the release" ticked to rebuild
+#   the release of the current version from scratch, with the same version number.
 on:
   push:
     branches: [main]
     paths-ignore: ["**.md", "docs/**"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      replace_release:
+        description: "Replace the release of the current version with a fresh build"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -76,9 +83,9 @@ jobs:
           ICONSET=dist/FLeeker.iconset
           mkdir -p "$ICONSET"
           for s in 16 32 128 256 512; do
-            sips -z $s $s assets/icon.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
+            sips -z $s $s assets/icon-mac.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
             d=$((s * 2))
-            sips -z $d $d assets/icon.png --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
+            sips -z $d $d assets/icon-mac.png --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
           done
           iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/FLeeker.icns"
 
@@ -106,11 +113,39 @@ jobs:
 
           cd dist
           ditto -c -k --keepParent FLeeker.app FLeeker-macos.zip
-          rm -rf FLeeker.app FLeeker.iconset
+      - name: Create FLeeker-macos.dmg
+        run: |
+          # The classic install window: the app on the left, an arrow, the Applications folder on the right
+          python3 -m venv "$RUNNER_TEMP/dmg"
+          "$RUNNER_TEMP/dmg/bin/pip" install --quiet dmgbuild
+          tiffutil -cathidpicheck assets/dmg/background.png assets/dmg/background@2x.png -out dist/dmg-background.tiff
+          cat > dist/dmg-settings.py <<'EOF'
+          files = ["dist/FLeeker.app"]
+          symlinks = {"Applications": "/Applications"}
+          icon = "dist/FLeeker.app/Contents/Resources/FLeeker.icns"
+          background = "dist/dmg-background.tiff"
+          window_rect = ((200, 160), (640, 400))
+          default_view = "icon-view"
+          show_status_bar = False
+          show_tab_view = False
+          show_toolbar = False
+          show_pathbar = False
+          show_sidebar = False
+          icon_size = 128
+          text_size = 13
+          icon_locations = {"FLeeker.app": (160, 190), "Applications": (480, 190)}
+          hide_extension = ["FLeeker.app"]
+          format = "UDZO"
+          EOF
+          "$RUNNER_TEMP/dmg/bin/dmgbuild" -s dist/dmg-settings.py "FLeeker" dist/FLeeker-macos.dmg
+          hdiutil verify dist/FLeeker-macos.dmg
+          rm -rf dist/FLeeker.app dist/FLeeker.iconset dist/dmg-background.tiff dist/dmg-settings.py
       - uses: actions/upload-artifact@v4
         with:
           name: FLeeker-macos
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*.dmg
 
   release:
     needs: [windows, macos]
@@ -125,11 +160,15 @@ jobs:
         run: |
           VERSION=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          if gh release view "v$VERSION" >/dev/null 2>&1; then
+          if ! gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.replace_release }}" = "true" ]; then
+            echo "Replacing release v$VERSION with this build."
+            gh release delete "v$VERSION" --cleanup-tag --yes
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
             echo "new=false" >> "$GITHUB_OUTPUT"
             echo "Release v$VERSION already exists: nothing to publish."
-          else
-            echo "new=true" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/download-artifact@v4
         if: steps.v.outputs.new == 'true'
@@ -146,11 +185,12 @@ jobs:
 
           ### Downloads
           - **Windows 10/11:** `FLeeker-windows.exe`
-          - **macOS 11+ (Apple Silicon & Intel):** `FLeeker-macos.zip`
+          - **macOS 11+ (Apple Silicon & Intel):** `FLeeker-macos.dmg` (or `FLeeker-macos.zip`)
 
           ### First launch
           - **Windows:** if SmartScreen appears, click *More info* then *Run anyway*.
-          - **macOS:** unzip, move FLeeker.app to Applications, right-click it and choose *Open*
+          - **macOS:** open the .dmg and drag FLeeker onto the Applications folder. The first time,
+            right-click FLeeker in Applications and choose *Open*
             (macOS 15+: System Settings, Privacy & Security, *Open Anyway*).
 
           *Not affiliated with Image-Line.*
@@ -163,4 +203,5 @@ jobs:
           body_path: notes.md
           files: |
             dist/FLeeker-windows.exe
+            dist/FLeeker-macos.dmg
             dist/FLeeker-macos.zip
