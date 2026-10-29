@@ -1,4 +1,4 @@
-//! Interfaccia grafica (inglese e italiano).
+//! Interfaccia grafica (inglese, cinese, tedesco, spagnolo, francese, italiano).
 
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -18,6 +18,7 @@ use crate::engine::paths::{basename_any, norm_key, parent_any};
 use crate::engine::plan::{self, Action, EntryInfo, Reason, Row, Status, Summary};
 use crate::engine::scan::Progress;
 use crate::engine::system;
+use crate::i18n;
 use crate::engine::tags::{self, BackupInfo, TagsFile};
 use crate::engine::{self, Loaded, SearchOutput};
 
@@ -33,22 +34,56 @@ pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub enum Lang {
     #[default]
     En,
+    Zh,
+    De,
+    Es,
+    Fr,
     It,
 }
 
 impl Lang {
-    fn system() -> Lang {
-        match sys_locale::get_locale() {
-            Some(l) if l.to_lowercase().starts_with("it") => Lang::It,
-            _ => Lang::En,
+    /// Ordine del menu: l'inglese (lingua di partenza) e poi le altre.
+    const ALL: [Lang; 6] = [Lang::En, Lang::Zh, Lang::De, Lang::Es, Lang::Fr, Lang::It];
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Lang::En => "English",
+            Lang::Zh => "中文",
+            Lang::De => "Deutsch",
+            Lang::Es => "Español",
+            Lang::Fr => "Français",
+            Lang::It => "Italiano",
         }
     }
-    /// Sceglie il testo nella lingua attiva.
+
+    fn code(self) -> &'static str {
+        match self {
+            Lang::En => "EN",
+            Lang::Zh => "中文",
+            Lang::De => "DE",
+            Lang::Es => "ES",
+            Lang::Fr => "FR",
+            Lang::It => "IT",
+        }
+    }
+
+    /// Sceglie il testo nella lingua attiva. Inglese e italiano sono scritti nel codice,
+    /// le altre lingue stanno in i18n.rs (con l'inglese come chiave e come riserva).
     fn t(self, en: &'static str, it: &'static str) -> &'static str {
         match self {
             Lang::En => en,
             Lang::It => it,
+            _ => i18n::get(self, en).unwrap_or(en),
         }
+    }
+
+    /// Come `t`, poi sostituisce {0}, {1}, ... con i valori.
+    fn f(self, en: &'static str, it: &'static str, args: &[&dyn std::fmt::Display]) -> String {
+        let mut s = self.t(en, it).to_string();
+        for (i, a) in args.iter().enumerate() {
+            s = s.replace(&format!("{{{i}}}"), &a.to_string());
+        }
+        s
     }
 }
 
@@ -76,10 +111,10 @@ fn action_label(l: Lang, a: Action) -> &'static str {
 }
 
 fn reason_text(l: Lang, r: &Reason) -> String {
-    let plus = |extra: usize| match (extra, l) {
-        (0, _) => String::new(),
-        (n, Lang::En) => format!(" (+{n} identical {})", if n == 1 { "copy" } else { "copies" }),
-        (n, Lang::It) => format!(" (+{n} {})", if n == 1 { "copia identica" } else { "copie identiche" }),
+    let plus = |extra: usize| match extra {
+        0 => String::new(),
+        1 => l.f(" (+{0} identical copy)", " (+{0} copia identica)", &[&1]),
+        n => l.f(" (+{0} identical copies)", " (+{0} copie identiche)", &[&n]),
     };
     match (r, l) {
         (Reason::Valid, _) => l.t("File is available", "File disponibile").into(),
@@ -87,40 +122,49 @@ fn reason_text(l: Lang, r: &Reason) -> String {
         (Reason::DuplicateEntry, _) => {
             l.t("This entry appears twice in the favorites file", "Questa voce compare due volte nel file dei preferiti").into()
         }
-        (Reason::SameContentAs(n), Lang::En) => format!("Identical content to \"{n}\""),
-        (Reason::SameContentAs(n), Lang::It) => format!("Contenuto identico a \"{n}\""),
-        (Reason::AlreadyStarredContent(n), Lang::En) => format!("The same file is already a favorite as \"{n}\""),
-        (Reason::AlreadyStarredContent(n), Lang::It) => format!("Lo stesso file è già nei preferiti come \"{n}\""),
+        (Reason::SameContentAs(n), _) => l.f("Identical content to \"{0}\"", "Contenuto identico a \"{0}\"", &[n]),
+        (Reason::AlreadyStarredContent(n), _) => l.f(
+            "The same file is already a favorite as \"{0}\"",
+            "Lo stesso file è già nei preferiti come \"{0}\"",
+            &[n],
+        ),
         (Reason::AlreadyStarredName, _) => l
             .t("A valid favorite with the same name already exists", "Esiste già un preferito valido con lo stesso nome")
             .into(),
-        (Reason::Verified { extra }, Lang::En) => format!("Located, content verified{}", plus(*extra)),
-        (Reason::Verified { extra }, Lang::It) => format!("Individuato, contenuto verificato{}", plus(*extra)),
-        (Reason::Renamed { new_name, extra }, Lang::En) => {
-            format!("Located by content, renamed to \"{new_name}\"{}", plus(*extra))
+        (Reason::Verified { extra }, _) => {
+            l.t("Located, content verified", "Individuato, contenuto verificato").to_string() + &plus(*extra)
         }
-        (Reason::Renamed { new_name, extra }, Lang::It) => {
-            format!("Individuato dal contenuto, rinominato in \"{new_name}\"{}", plus(*extra))
+        (Reason::Renamed { new_name, extra }, _) => {
+            l.f(
+                "Located by content, renamed to \"{0}\"",
+                "Individuato dal contenuto, rinominato in \"{0}\"",
+                &[new_name],
+            ) + &plus(*extra)
         }
-        (Reason::Located { copies }, Lang::En) if *copies > 1 => format!("Located ({copies} identical copies)"),
-        (Reason::Located { copies }, Lang::It) if *copies > 1 => format!("Individuato ({copies} copie identiche)"),
+        (Reason::Located { copies }, _) if *copies > 1 => {
+            l.f("Located ({0} identical copies)", "Individuato ({0} copie identiche)", &[copies])
+        }
         (Reason::Located { .. }, _) => l.t("Located by file name", "Individuato per nome file").into(),
-        (Reason::DifferentContent { n }, Lang::En) => format!(
-            "{n} {} with this name, but the content differs from the original. Select one manually if appropriate",
-            if *n == 1 { "file" } else { "files" }
+        (Reason::DifferentContent { n: 1 }, _) => l
+            .t(
+                "1 file with this name, but the content differs from the original. Select it manually if appropriate",
+                "1 file con questo nome, ma il contenuto è diverso dall'originale. Selezionalo manualmente se opportuno",
+            )
+            .into(),
+        (Reason::DifferentContent { n }, _) => l.f(
+            "{0} files with this name, but the content differs from the original. Select one manually if appropriate",
+            "{0} file con questo nome, ma il contenuto è diverso dall'originale. Selezionane uno manualmente se opportuno",
+            &[n],
         ),
-        (Reason::DifferentContent { n }, Lang::It) => format!(
-            "{n} file con questo nome, ma il contenuto è diverso dall'originale. Selezionane uno manualmente se opportuno"
+        (Reason::Versions { n }, _) => l.f(
+            "{0} different versions with this name. The most likely match is selected, please review",
+            "{0} versioni diverse con questo nome. È selezionata la più probabile, verifica",
+            &[n],
         ),
-        (Reason::Versions { n }, Lang::En) => {
-            format!("{n} different versions with this name. The most likely match is selected, please review")
-        }
-        (Reason::Versions { n }, Lang::It) => {
-            format!("{n} versioni diverse con questo nome. È selezionata la più probabile, verifica")
-        }
         (Reason::NotFound, _) => l.t("Not found in the scan locations", "Non trovato nelle posizioni di scansione").into(),
-        (Reason::DriveOffline(d), Lang::En) => format!("Drive {d} is not connected. Entry kept"),
-        (Reason::DriveOffline(d), Lang::It) => format!("L'unità {d} non è collegata. Voce mantenuta"),
+        (Reason::DriveOffline(d), _) => {
+            l.f("Drive {0} is not connected. Entry kept", "L'unità {0} non è collegata. Voce mantenuta", &[d])
+        }
     }
 }
 
@@ -222,7 +266,9 @@ struct Settings {
     folders: Vec<PathBuf>,
     use_hash: bool,
     dark: bool,
-    lang: Option<Lang>,
+    /// Lingua scelta dall'utente (si parte sempre in inglese). Il vecchio campo `lang`
+    /// non viene piu letto, cosi anche chi aveva l'italiano automatico riparte in inglese.
+    language: Lang,
     /// Si riparte sempre in anteprima, per sicurezza.
     #[serde(skip)]
     test_mode: bool,
@@ -230,7 +276,7 @@ struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        Settings { tags_path: String::new(), folders: vec![], use_hash: true, dark: true, lang: None, test_mode: true }
+        Settings { tags_path: String::new(), folders: vec![], use_hash: true, dark: true, language: Lang::En, test_mode: true }
     }
 }
 
@@ -352,7 +398,7 @@ impl App {
         }
 
         let mut app = App {
-            lang: settings.lang.unwrap_or_else(Lang::system),
+            lang: settings.language,
             pal: if settings.dark { DARK } else { LIGHT },
             settings,
             db: Arc::new(Mutex::new(HashDb::load(&hashdb::db_path()))),
@@ -532,16 +578,11 @@ impl App {
         }
         match engine::apply(&doc.tags, &doc.infos, &doc.rows, &self.db) {
             Ok(backup) => {
-                let body = match self.lang {
-                    Lang::En => format!(
-                        "The favorites file has been updated.\n\nBackup of the previous version:\n{}\n\nOpen FL Studio to review your favorites.",
-                        backup.display()
-                    ),
-                    Lang::It => format!(
-                        "Il file dei preferiti è stato aggiornato.\n\nBackup della versione precedente:\n{}\n\nApri FL Studio per controllare i preferiti.",
-                        backup.display()
-                    ),
-                };
+                let body = self.lang.f(
+                    "The favorites file has been updated.\n\nBackup of the previous version:\n{0}\n\nOpen FL Studio to review your favorites.",
+                    "Il file dei preferiti è stato aggiornato.\n\nBackup della versione precedente:\n{0}\n\nApri FL Studio per controllare i preferiti.",
+                    &[&backup.display()],
+                );
                 self.dialog = Dialog::Info { title: self.l("Changes applied", "Modifiche applicate").into(), body, good: true };
                 self.start_load(ctx);
             }
@@ -587,12 +628,44 @@ fn setup_fonts(ctx: &egui::Context) {
         "inter_semibold".into(),
         Arc::new(egui::FontData::from_static(include_bytes!("../assets/fonts/Inter-SemiBold.ttf"))),
     );
+    // Cinese dell'interfaccia: Noto Sans SC (OFL) ridotto ai soli caratteri usati in i18n.rs.
+    // Se cambiano le traduzioni cinesi va rigenerato (vedi assets/fonts/README.md).
+    fonts.font_data.insert(
+        "cjk_ui".into(),
+        Arc::new(egui::FontData::from_static(include_bytes!("../assets/fonts/NotoSansSC-UI.otf"))),
+    );
+    let mut cjk = vec!["cjk_ui".to_string()];
+    // Font CJK completo del sistema, se c'e: serve per i nomi dei sample in cinese/giapponese/coreano.
+    if let Some(data) = system_cjk_font() {
+        fonts.font_data.insert("cjk_system".into(), Arc::new(egui::FontData::from_owned(data)));
+        cjk.push("cjk_system".into());
+    }
+
     let fallback = fonts.families.get(&FontFamily::Proportional).cloned().unwrap_or_default();
     fonts.families.entry(FontFamily::Proportional).or_default().insert(0, "inter".into());
     let mut bold_family = vec!["inter_semibold".to_string()];
     bold_family.extend(fallback);
     fonts.families.insert(FontFamily::Name("bold".into()), bold_family);
+    for family in [FontFamily::Proportional, FontFamily::Monospace, FontFamily::Name("bold".into())] {
+        fonts.families.entry(family).or_default().extend(cjk.iter().cloned());
+    }
     ctx.set_fonts(fonts);
+}
+
+fn system_cjk_font() -> Option<Vec<u8>> {
+    let candidates: &[&str] = if cfg!(windows) {
+        &[r"C:\Windows\Fonts\msyh.ttc", r"C:\Windows\Fonts\msyh.ttf", r"C:\Windows\Fonts\simsun.ttc"]
+    } else if cfg!(target_os = "macos") {
+        &[
+            "/System/Library/Fonts/PingFang.ttc",
+            "/System/Library/Fonts/STHeiti Light.ttc",
+            "/System/Library/Fonts/Hiragino Sans GB.ttc",
+            "/Library/Fonts/Arial Unicode.ttf",
+        ]
+    } else {
+        &["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc", "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"]
+    };
+    candidates.iter().find_map(|p| std::fs::read(p).ok())
 }
 
 fn bold(size: f32) -> FontId {
@@ -861,16 +934,18 @@ impl App {
                     apply_style(ui.ctx(), &self.pal, self.settings.dark);
                 }
                 // selettore lingua
-                for (lang, code) in [(Lang::It, "IT"), (Lang::En, "EN")] {
-                    let sel = self.lang == lang;
-                    let b = egui::Button::new(RichText::new(code).font(bold(12.5)).color(if sel { p.on_accent } else { p.weak }))
-                        .fill(if sel { p.accent } else { p.card_hi })
-                        .min_size(Vec2::new(36.0, 34.0));
-                    if ui.add(b).clicked() {
-                        self.lang = lang;
-                        self.settings.lang = Some(lang);
+                let label = RichText::new(format!("🌐  {}  ⏷", self.lang.code())).font(bold(12.5));
+                ui.menu_button(label, |ui| {
+                    for l in Lang::ALL {
+                        if ui.selectable_label(self.lang == l, RichText::new(l.name()).size(14.0)).clicked() {
+                            self.lang = l;
+                            self.settings.language = l;
+                            ui.close();
+                        }
                     }
-                }
+                })
+                .response
+                .on_hover_text(self.l("Language", "Lingua"));
                 ui.add_space(6.0);
                 if self.fl_running.load(Ordering::Relaxed) {
                     chip(
@@ -973,10 +1048,11 @@ impl App {
             if let Some(job) = self.job.as_ref().filter(|j| j.kind == JobKind::Load) {
                 let done = job.progress.hashed_files.load(Ordering::Relaxed);
                 let total = job.progress.to_hash.load(Ordering::Relaxed).max(1);
-                let txt = match self.lang {
-                    Lang::En => format!("Checking favorites: {} of {}", fmt_num(done), fmt_num(total)),
-                    Lang::It => format!("Controllo dei preferiti: {} di {}", fmt_num(done), fmt_num(total)),
-                };
+                let txt = self.lang.f(
+                    "Checking favorites: {0} of {1}",
+                    "Controllo dei preferiti: {0} di {1}",
+                    &[&fmt_num(done), &fmt_num(total)],
+                );
                 ui.add(egui::ProgressBar::new(done as f32 / total as f32).fill(p.accent).text(txt));
                 hint(
                     ui,
@@ -1078,10 +1154,7 @@ impl App {
                 .on_hover_text(tip);
             });
             let n_fp = self.db.lock().unwrap().fingerprints.len();
-            let idx = match lang {
-                Lang::En => format!("Content index: {} samples", fmt_num(n_fp as u64)),
-                Lang::It => format!("Indice dei contenuti: {} sample", fmt_num(n_fp as u64)),
-            };
+            let idx = lang.f("Content index: {0} samples", "Indice dei contenuti: {0} sample", &[&fmt_num(n_fp as u64)]);
             hint(ui, &p, &idx);
 
             ui.add_space(6.0);
@@ -1094,16 +1167,14 @@ impl App {
                 let hashed = pr.hashed_files.load(Ordering::Relaxed);
                 if to_hash > 0 {
                     let frac = hashed as f32 / to_hash as f32;
-                    let txt = match lang {
-                        Lang::En => format!("Verifying content: {} of {}", fmt_num(hashed), fmt_num(to_hash)),
-                        Lang::It => format!("Verifica del contenuto: {} di {}", fmt_num(hashed), fmt_num(to_hash)),
-                    };
+                    let txt = lang.f(
+                        "Verifying content: {0} of {1}",
+                        "Verifica del contenuto: {0} di {1}",
+                        &[&fmt_num(hashed), &fmt_num(to_hash)],
+                    );
                     ui.add(egui::ProgressBar::new(frac).fill(p.accent).text(txt));
                 } else {
-                    let txt = match lang {
-                        Lang::En => format!("Folders: {}  ·  Files: {}", fmt_num(dirs), fmt_num(files)),
-                        Lang::It => format!("Cartelle: {}  ·  File: {}", fmt_num(dirs), fmt_num(files)),
-                    };
+                    let txt = lang.f("Folders: {0}  ·  Files: {1}", "Cartelle: {0}  ·  File: {1}", &[&fmt_num(dirs), &fmt_num(files)]);
                     ui.add(egui::ProgressBar::new(0.0).animate(true).fill(p.accent).text(txt));
                 }
                 if ui
@@ -1124,22 +1195,14 @@ impl App {
                 }
             }
             if let Some((dirs, files, el, cancelled)) = self.last_search {
-                let msg = match lang {
-                    Lang::En => format!(
-                        "{}Scanned {} folders and {} files in {:.1} s",
-                        if cancelled { "Scan stopped early. " } else { "" },
-                        fmt_num(dirs),
-                        fmt_num(files),
-                        el.as_secs_f32()
-                    ),
-                    Lang::It => format!(
-                        "{}Analizzate {} cartelle e {} file in {:.1} s",
-                        if cancelled { "Scansione interrotta. " } else { "" },
-                        fmt_num(dirs),
-                        fmt_num(files),
-                        el.as_secs_f32()
-                    ),
-                };
+                let mut msg = lang.f(
+                    "Scanned {0} folders and {1} files in {2} s",
+                    "Analizzate {0} cartelle e {1} file in {2} s",
+                    &[&fmt_num(dirs), &fmt_num(files), &format!("{:.1}", el.as_secs_f32())],
+                );
+                if cancelled {
+                    msg = format!("{} {msg}", lang.t("Scan stopped early.", "Scansione interrotta."));
+                }
                 hint(ui, &p, &msg);
             }
         });
@@ -1376,10 +1439,7 @@ impl App {
         let Some(doc) = &mut self.doc else { return };
         let n_nf = doc.rows.iter().filter(|r| r.status == Status::NotFound && r.action == Action::Keep).count();
         let n_dup = doc.rows.iter().filter(|r| r.status == Status::OkSameContent && r.action == Action::Keep).count();
-        let t1 = match lang {
-            Lang::En => format!("Remove all not-found favorites ({n_nf})"),
-            Lang::It => format!("Rimuovi tutti i preferiti non trovati ({n_nf})"),
-        };
+        let t1 = lang.f("Remove all not-found favorites ({0})", "Rimuovi tutti i preferiti non trovati ({0})", &[&n_nf]);
         if ui
             .add_enabled(n_nf > 0, egui::Button::new(t1))
             .on_hover_text(lang.t("Favorites on disconnected drives are not affected", "I preferiti su unità scollegate non vengono toccati"))
@@ -1392,10 +1452,7 @@ impl App {
             }
             ui.close();
         }
-        let t2 = match lang {
-            Lang::En => format!("Remove duplicate-content favorites ({n_dup})"),
-            Lang::It => format!("Rimuovi i preferiti con contenuto duplicato ({n_dup})"),
-        };
+        let t2 = lang.f("Remove duplicate-content favorites ({0})", "Rimuovi i preferiti con contenuto duplicato ({0})", &[&n_dup]);
         if ui
             .add_enabled(n_dup > 0, egui::Button::new(t2))
             .on_hover_text(lang.t(
@@ -1505,10 +1562,7 @@ impl App {
 
             if !r.candidates.is_empty() {
                 ui.add_space(2.0);
-                let head = match lang {
-                    Lang::En => format!("Matches found ({})", r.candidates.len()),
-                    Lang::It => format!("Corrispondenze trovate ({})", r.candidates.len()),
-                };
+                let head = lang.f("Matches found ({0})", "Corrispondenze trovate ({0})", &[&r.candidates.len()]);
                 ui.label(RichText::new(head).font(bold(13.0)));
                 {
                     for (ci, c) in r.candidates.iter().enumerate() {
@@ -1603,22 +1657,11 @@ impl App {
                     let msg = if changes == 0 {
                         RichText::new(lang.t("No pending changes", "Nessuna modifica in sospeso")).color(p.weak)
                     } else {
-                        RichText::new(match lang {
-                            Lang::En => format!(
-                                "{} to relink  ·  {} to remove  ·  {} ➡ {} favorites",
-                                s.update,
-                                s.remove,
-                                s.total,
-                                s.total - s.remove
-                            ),
-                            Lang::It => format!(
-                                "{} da ricollegare  ·  {} da rimuovere  ·  {} ➡ {} preferiti",
-                                s.update,
-                                s.remove,
-                                s.total,
-                                s.total - s.remove
-                            ),
-                        })
+                        RichText::new(lang.f(
+                            "{0} to relink  ·  {1} to remove  ·  {2} ➡ {3} favorites",
+                            "{0} da ricollegare  ·  {1} da rimuovere  ·  {2} ➡ {3} preferiti",
+                            &[&s.update, &s.remove, &s.total, &(s.total - s.remove)],
+                        ))
                     };
                     ui.add(egui::Label::new(msg.size(13.5)).truncate());
                 }
@@ -1682,23 +1725,35 @@ impl App {
                     ui.label(RichText::new(lang.t("No files have been modified.", "Nessun file è stato modificato.")).color(p.weak));
                     ui.add_space(8.0);
                     ui.label(lang.t("If you apply these changes:", "Se applichi queste modifiche:"));
-                    match lang {
-                        Lang::En => {
-                            bullet(ui, format!("{} favorites will be relinked to their new location", s.update), p.green);
-                            bullet(ui, format!("{} favorites will be removed", s.remove), p.red);
-                            bullet(ui, format!("The file will go from {} to {} favorites", s.total, s.total - s.remove), p.text);
-                            if s.check > 0 {
-                                bullet(ui, format!("{} need review: check them before applying", s.check), p.orange);
-                            }
-                        }
-                        Lang::It => {
-                            bullet(ui, format!("{} preferiti verranno ricollegati alla nuova posizione", s.update), p.green);
-                            bullet(ui, format!("{} preferiti verranno rimossi", s.remove), p.red);
-                            bullet(ui, format!("Il file passerà da {} a {} preferiti", s.total, s.total - s.remove), p.text);
-                            if s.check > 0 {
-                                bullet(ui, format!("{} sono da verificare: controllali prima di applicare", s.check), p.orange);
-                            }
-                        }
+                    bullet(
+                        ui,
+                        lang.f(
+                            "{0} favorites will be relinked to their new location",
+                            "{0} preferiti verranno ricollegati alla nuova posizione",
+                            &[&s.update],
+                        ),
+                        p.green,
+                    );
+                    bullet(ui, lang.f("{0} favorites will be removed", "{0} preferiti verranno rimossi", &[&s.remove]), p.red);
+                    bullet(
+                        ui,
+                        lang.f(
+                            "The file will go from {0} to {1} favorites",
+                            "Il file passerà da {0} a {1} preferiti",
+                            &[&s.total, &(s.total - s.remove)],
+                        ),
+                        p.text,
+                    );
+                    if s.check > 0 {
+                        bullet(
+                            ui,
+                            lang.f(
+                                "{0} need review: check them before applying",
+                                "{0} sono da verificare: controllali prima di applicare",
+                                &[&s.check],
+                            ),
+                            p.orange,
+                        );
                     }
                     ui.add_space(10.0);
                     ui.with_layout(Layout::right_to_left(Align::Min), |ui| {
@@ -1722,21 +1777,10 @@ impl App {
                     ui.set_width(480.0);
                     ui.label(RichText::new(lang.t("Update the favorites file?", "Aggiornare il file dei preferiti?")).font(bold(17.0)));
                     ui.add_space(6.0);
-                    match lang {
-                        Lang::En => {
-                            bullet(ui, format!("{} favorites relinked", s.update), p.green);
-                            bullet(ui, format!("{} favorites removed", s.remove), p.red);
-                            if s.check > 0 {
-                                bullet(ui, format!("{} still need review", s.check), p.orange);
-                            }
-                        }
-                        Lang::It => {
-                            bullet(ui, format!("{} preferiti ricollegati", s.update), p.green);
-                            bullet(ui, format!("{} preferiti rimossi", s.remove), p.red);
-                            if s.check > 0 {
-                                bullet(ui, format!("{} ancora da verificare", s.check), p.orange);
-                            }
-                        }
+                    bullet(ui, lang.f("{0} favorites relinked", "{0} preferiti ricollegati", &[&s.update]), p.green);
+                    bullet(ui, lang.f("{0} favorites removed", "{0} preferiti rimossi", &[&s.remove]), p.red);
+                    if s.check > 0 {
+                        bullet(ui, lang.f("{0} still need review", "{0} ancora da verificare", &[&s.check]), p.orange);
                     }
                     ui.add_space(6.0);
                     hint(
@@ -1804,13 +1848,14 @@ impl App {
                             Frame::new().fill(p.card_hi).corner_radius(CornerRadius::same(8)).inner_margin(Margin::symmetric(10, 6)).show(ui, |ui| {
                                 ui.set_width(ui.available_width());
                                 ui.horizontal(|ui| {
-                                    let fmt = if lang == Lang::En { "%Y-%m-%d  %H:%M" } else { "%d/%m/%Y  %H:%M" };
+                                    let fmt = match lang {
+                                        Lang::En | Lang::Zh => "%Y-%m-%d  %H:%M",
+                                        Lang::De => "%d.%m.%Y  %H:%M",
+                                        _ => "%d/%m/%Y  %H:%M",
+                                    };
                                     let when = b.modified.map(|d| d.format(fmt).to_string()).unwrap_or_default();
                                     ui.label(RichText::new(when).font(bold(13.5)));
-                                    let n = match lang {
-                                        Lang::En => format!("{} favorites", b.favorites),
-                                        Lang::It => format!("{} preferiti", b.favorites),
-                                    };
+                                    let n = lang.f("{0} favorites", "{0} preferiti", &[&b.favorites]);
                                     ui.label(RichText::new(n).color(p.weak));
                                     if b.name.contains("before_restore") || b.name.contains("prima_del_ripristino") {
                                         chip(ui, lang.t("before a restore", "prima di un ripristino"), p.gray);

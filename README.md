@@ -45,7 +45,8 @@ FLeeker reads FL Studio's favorites file, finds every favorite that points to a 
   - refuses to write while FL Studio is running (FL would overwrite the changes on exit)
   - lines you don't change are kept byte-for-byte identical
 - **Fast:** written in Rust, scans thousands of folders in parallel on all CPU cores
-- **Clean interface:** dark & light themes, English & Italian, filters, search, drag & drop, resizable panels
+- **6 languages:** English, 中文 (Chinese), Deutsch, Español, Français, Italiano (switch from the 🌐 menu)
+- **Clean interface:** dark & light themes, filters, search, drag & drop, resizable panels
 - **Portable:** a single file, no installation, no internet connection, no account
 
 ## Download
@@ -124,4 +125,4 @@ Image-Line**. FL Studio is a trademark of Image-Line Software. Always keep backu
 
 ## License
 
-[MIT](LICENSE). The bundled Inter font is licensed under the [SIL Open Font License](assets/fonts/OFL-Inter.txt).
+[MIT](LICENSE). The bundled Inter and Noto Sans SC fonts are licensed under the SIL Open Font License (see [assets/fonts](assets/fonts/README.md)).

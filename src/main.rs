@@ -1,6 +1,7 @@
 #![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
 
 mod engine;
+mod i18n;
 mod gui;
 
 fn main() -> eframe::Result {
