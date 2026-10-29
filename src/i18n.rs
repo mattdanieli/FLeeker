@@ -182,6 +182,23 @@ const ZH: &[(&str, &str)] = &[
     ("Backup restored", "备份已恢复"),
     ("Favorites have been reloaded.", "收藏已重新加载。"),
     ("Restore failed", "恢复失败"),
+    // Guida di benvenuto
+    ("Skip", "跳过"),
+    ("Next", "下一步"),
+    ("Back", "上一步"),
+    ("Get started", "开始使用"),
+    ("Welcome guide", "欢迎指南"),
+    ("Welcome to FLeeker", "欢迎使用 FLeeker"),
+    ("FLeeker brings back the favorites you starred in the FL Studio browser after their samples were moved. Here is a quick tour: it takes 30 seconds.", "采样被移动后，FLeeker 能找回你在 FL Studio 浏览器中加星标的收藏。下面是快速导览，只需 30 秒。"),
+    ("Lost your favorites?", "收藏不见了？"),
+    ("Move a sample folder, rename a pack or switch to a new drive, and FL Studio can no longer find the samples you starred. Your Starred list fills up with dead entries.", "移动了采样文件夹、重命名了采样包或换了新硬盘后，FL Studio 就找不到你加星标的采样了。收藏列表里会出现一堆失效条目。"),
+    ("FLeeker finds them again", "FLeeker 帮你找回来"),
+    ("It searches the folders you choose for every missing sample and relinks each favorite to its new place. It recognizes a sample by its content too, so it finds it even if it was renamed.", "它会在你选择的文件夹中搜索每个缺失的采样，并把每个收藏重新链接到新位置。它还能通过内容识别采样，即使文件被重命名也能找到。"),
+    ("Three steps", "三个步骤"),
+    ("FLeeker finds the FL Studio favorites file by itself. Add the folders where your samples are now, press \"Scan for missing samples\", check the result, then apply the changes.", "FLeeker 会自动找到 FL Studio 的收藏文件。添加采样现在所在的文件夹，点击“扫描缺失的采样”，检查结果，然后应用更改。"),
+    ("Safe by design", "安全设计"),
+    ("FLeeker starts in Preview mode: nothing is written until you switch to Live mode. A backup is saved before every change, and nothing is written while FL Studio is open. Ready? Let's go.", "FLeeker 以预览模式启动：在你切换到实际模式之前不会写入任何内容。每次修改前都会保存备份，FL Studio 打开时也不会写入任何内容。准备好了吗？开始吧。"),
+    ("Backup before every change", "每次修改前都备份"),
 ];
 
 // German
@@ -344,6 +361,23 @@ const DE: &[(&str, &str)] = &[
     ("Backup restored", "Backup wiederhergestellt"),
     ("Favorites have been reloaded.", "Die Favoriten wurden neu geladen."),
     ("Restore failed", "Wiederherstellung fehlgeschlagen"),
+    // Guida di benvenuto
+    ("Skip", "Überspringen"),
+    ("Next", "Weiter"),
+    ("Back", "Zurück"),
+    ("Get started", "Los geht's"),
+    ("Welcome guide", "Willkommensguide"),
+    ("Welcome to FLeeker", "Willkommen bei FLeeker"),
+    ("FLeeker brings back the favorites you starred in the FL Studio browser after their samples were moved. Here is a quick tour: it takes 30 seconds.", "FLeeker holt die Favoriten zurück, die du im FL-Studio-Browser mit einem Stern markiert hast, nachdem ihre Samples verschoben wurden. Hier ist eine kurze Tour: Sie dauert 30 Sekunden."),
+    ("Lost your favorites?", "Favoriten verloren?"),
+    ("Move a sample folder, rename a pack or switch to a new drive, and FL Studio can no longer find the samples you starred. Your Starred list fills up with dead entries.", "Verschiebe einen Sample-Ordner, benenne ein Pack um oder wechsle auf ein neues Laufwerk, und FL Studio findet die markierten Samples nicht mehr. Deine Favoritenliste füllt sich mit toten Einträgen."),
+    ("FLeeker finds them again", "FLeeker findet sie wieder"),
+    ("It searches the folders you choose for every missing sample and relinks each favorite to its new place. It recognizes a sample by its content too, so it finds it even if it was renamed.", "Es sucht in den gewählten Ordnern nach jedem fehlenden Sample und verknüpft jeden Favoriten mit seinem neuen Ort. Es erkennt ein Sample auch am Inhalt und findet es daher auch, wenn es umbenannt wurde."),
+    ("Three steps", "Drei Schritte"),
+    ("FLeeker finds the FL Studio favorites file by itself. Add the folders where your samples are now, press \"Scan for missing samples\", check the result, then apply the changes.", "FLeeker findet die Favoritendatei von FL Studio von selbst. Füge die Ordner hinzu, in denen deine Samples jetzt liegen, klicke auf \"Nach fehlenden Samples suchen\", prüfe das Ergebnis und übernimm dann die Änderungen."),
+    ("Safe by design", "Sicher von Grund auf"),
+    ("FLeeker starts in Preview mode: nothing is written until you switch to Live mode. A backup is saved before every change, and nothing is written while FL Studio is open. Ready? Let's go.", "FLeeker startet im Vorschaumodus: Nichts wird geschrieben, bis du in den Live-Modus wechselst. Vor jeder Änderung wird ein Backup gespeichert, und solange FL Studio geöffnet ist, wird nichts geschrieben. Bereit? Los geht's."),
+    ("Backup before every change", "Backup vor jeder Änderung"),
 ];
 
 // Spanish
@@ -506,6 +540,23 @@ const ES: &[(&str, &str)] = &[
     ("Backup restored", "Copia de seguridad restaurada"),
     ("Favorites have been reloaded.", "Los favoritos se han vuelto a cargar."),
     ("Restore failed", "No se pudo restaurar"),
+    // Guida di benvenuto
+    ("Skip", "Saltar"),
+    ("Next", "Siguiente"),
+    ("Back", "Atrás"),
+    ("Get started", "Empezar"),
+    ("Welcome guide", "Guía de bienvenida"),
+    ("Welcome to FLeeker", "Bienvenido a FLeeker"),
+    ("FLeeker brings back the favorites you starred in the FL Studio browser after their samples were moved. Here is a quick tour: it takes 30 seconds.", "FLeeker recupera los favoritos que marcaste con estrella en el navegador de FL Studio después de mover sus samples. Aquí tienes un recorrido rápido: solo 30 segundos."),
+    ("Lost your favorites?", "¿Perdiste tus favoritos?"),
+    ("Move a sample folder, rename a pack or switch to a new drive, and FL Studio can no longer find the samples you starred. Your Starred list fills up with dead entries.", "Mueves una carpeta de samples, renombras un pack o cambias a un disco nuevo, y FL Studio ya no encuentra los samples que marcaste con estrella. Tu lista de favoritos se llena de entradas muertas."),
+    ("FLeeker finds them again", "FLeeker los vuelve a encontrar"),
+    ("It searches the folders you choose for every missing sample and relinks each favorite to its new place. It recognizes a sample by its content too, so it finds it even if it was renamed.", "Busca cada sample que falta en las carpetas que elijas y vuelve a enlazar cada favorito con su nuevo lugar. También reconoce un sample por su contenido, así que lo encuentra aunque lo hayan renombrado."),
+    ("Three steps", "Tres pasos"),
+    ("FLeeker finds the FL Studio favorites file by itself. Add the folders where your samples are now, press \"Scan for missing samples\", check the result, then apply the changes.", "FLeeker encuentra solo el archivo de favoritos de FL Studio. Añade las carpetas donde están ahora tus samples, pulsa \"Buscar samples que faltan\", revisa el resultado y aplica los cambios."),
+    ("Safe by design", "Seguro por diseño"),
+    ("FLeeker starts in Preview mode: nothing is written until you switch to Live mode. A backup is saved before every change, and nothing is written while FL Studio is open. Ready? Let's go.", "FLeeker empieza en modo vista previa: no se escribe nada hasta que cambias al modo real. Antes de cada cambio se guarda una copia de seguridad, y no se escribe nada mientras FL Studio está abierto. ¿Listo? Vamos."),
+    ("Backup before every change", "Copia de seguridad antes de cada cambio"),
 ];
 
 // French
@@ -668,6 +719,23 @@ const FR: &[(&str, &str)] = &[
     ("Backup restored", "Sauvegarde restaurée"),
     ("Favorites have been reloaded.", "Les favoris ont été rechargés."),
     ("Restore failed", "Échec de la restauration"),
+    // Guida di benvenuto
+    ("Skip", "Passer"),
+    ("Next", "Suivant"),
+    ("Back", "Retour"),
+    ("Get started", "Commencer"),
+    ("Welcome guide", "Guide de bienvenue"),
+    ("Welcome to FLeeker", "Bienvenue dans FLeeker"),
+    ("FLeeker brings back the favorites you starred in the FL Studio browser after their samples were moved. Here is a quick tour: it takes 30 seconds.", "FLeeker récupère les favoris que tu as marqués d'une étoile dans le navigateur de FL Studio après le déplacement de leurs samples. Voici une visite rapide : 30 secondes suffisent."),
+    ("Lost your favorites?", "Tes favoris ont disparu ?"),
+    ("Move a sample folder, rename a pack or switch to a new drive, and FL Studio can no longer find the samples you starred. Your Starred list fills up with dead entries.", "Tu déplaces un dossier de samples, renommes un pack ou passes à un nouveau disque, et FL Studio ne trouve plus les samples marqués d'une étoile. Ta liste de favoris se remplit d'entrées mortes."),
+    ("FLeeker finds them again", "FLeeker les retrouve"),
+    ("It searches the folders you choose for every missing sample and relinks each favorite to its new place. It recognizes a sample by its content too, so it finds it even if it was renamed.", "Il cherche chaque sample manquant dans les dossiers que tu choisis et relie chaque favori à son nouvel emplacement. Il reconnaît aussi un sample à son contenu, il le retrouve donc même s'il a été renommé."),
+    ("Three steps", "Trois étapes"),
+    ("FLeeker finds the FL Studio favorites file by itself. Add the folders where your samples are now, press \"Scan for missing samples\", check the result, then apply the changes.", "FLeeker trouve tout seul le fichier des favoris de FL Studio. Ajoute les dossiers où se trouvent maintenant tes samples, clique sur \"Rechercher les samples manquants\", vérifie le résultat, puis applique les modifications."),
+    ("Safe by design", "Sûr par conception"),
+    ("FLeeker starts in Preview mode: nothing is written until you switch to Live mode. A backup is saved before every change, and nothing is written while FL Studio is open. Ready? Let's go.", "FLeeker démarre en mode aperçu : rien n'est écrit tant que tu ne passes pas en mode réel. Une sauvegarde est faite avant chaque modification, et rien n'est écrit tant que FL Studio est ouvert. Prêt ? C'est parti."),
+    ("Backup before every change", "Sauvegarde avant chaque modification"),
 ];
 
 #[cfg(test)]
@@ -676,7 +744,7 @@ mod tests {
 
     /// Primo testo (quello inglese) di ogni chiamata t("..", ..), l("..", ..), f("..", ..) in gui.rs.
     fn keys_in_gui() -> Vec<String> {
-        let src = include_str!("gui.rs");
+        let src = concat!(include_str!("gui.rs"), include_str!("gui/welcome.rs"));
         let b = src.as_bytes();
         let mut keys = Vec::new();
         for pat in ["t(", "l(", "f("] {
